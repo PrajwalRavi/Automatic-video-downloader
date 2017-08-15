@@ -3,38 +3,58 @@ import tkinter
 import os
 from bs4 import BeautifulSoup
 import sys
+import re
+from pytube import YouTube
 
 class GetInput:
 
     def __init__(self):
 
-        file_list=None
+        self.file_list=None
+        self.path=None
 
     def files(self):
 
-        path=input().strip()
-        all_files=os.listdir(path)
-        file_list=[]
+        self.path=input().strip()
+        all_files=os.listdir(self.path)
+        self.file_list=[]
         for f in all_files:
             if(f[-3:] is not "mp4"):
-                file_list.append(f)
+                self.file_list.append(f[:-4])
 
 class Download:
 
-        def geturl(self, vid):
+        def __init__(self, files, path):
+
+            self.path=path
+            self.file_list=files
+
+        def getid(self, vid):
+
+            url = "https://www.youtube.com/results?search_query=" + vid
+            r = requests.get(url)
+            soup = BeautifulSoup(r.content, "lxml")
+            a = soup.find("a",
+                          class_="yt-uix-tile-link yt-ui-ellipsis yt-ui-ellipsis-2 yt-uix-sessionlink      spf-link ")
+            vid_id = a["href"]
+            return vid_id
 
 
         def yt_download(self):
 
+            print(self.file_list)
+
             for vid in self.file_list:
-                url=self.geturl(vid)
+                print("Downloading ",vid)
+                id=self.getid(vid)
+                url="https://www.youtube.com"+id
+                yt=YouTube(url)
+                video=yt.get("mp4", "720p")
+                video.download(self.path)
 
-
-class youtube:
-
-    def __init__(self):
-
-
+            print("\nDONE!!!\n")
 
 obj=GetInput()
 obj.files()
+download_obj=Download(obj.file_list, obj.path)
+download_obj.yt_download()
