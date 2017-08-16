@@ -42,8 +42,9 @@ class Download:
 
         def yt_download(self):
 
-            print(self.file_list)
-            finished = []
+            #print(self.file_list)
+            finished = {}
+            dup=0
 
             for vid in self.file_list:
                 if vid in finished:
@@ -61,7 +62,10 @@ class Download:
                     video=yt.get("mp4", "360p")
                     video.download(self.path)
 
-            print("\nDONE!!!\n")
+                else:
+                    dup+=1
+
+            print("\nDONE!!!\n",int(dup/2), " duplicates found.")
 
 obj=GetInput()
 obj.files()
