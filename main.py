@@ -43,14 +43,23 @@ class Download:
         def yt_download(self):
 
             print(self.file_list)
+            finished = []
 
             for vid in self.file_list:
-                print("Downloading ",vid)
-                id=self.getid(vid)
-                url="https://www.youtube.com"+id
-                yt=YouTube(url)
-                video=yt.get("mp4", "720p")
-                video.download(self.path)
+                if vid in finished:
+                    finished[vid]+=1
+                else:
+                    finished[vid]=0
+
+            for vid in self.file_list:
+                if(finished[vid]==0):
+                    print("Downloading ",vid)
+                    id=self.getid(vid)
+                    url="https://www.youtube.com"+id
+                    yt=YouTube(url)
+                    yt.set_filename(vid)
+                    video=yt.get("mp4", "360p")
+                    video.download(self.path)
 
             print("\nDONE!!!\n")
 
